@@ -113,16 +113,16 @@ impl Provider {
                     },
                 };
 
-                return serde_json::to_string(&response)
+                return serde_json::to_value(&response)
                     .map_err(|error| {
                         napi::Error::new(
                             Status::InvalidArg,
                             format!("Invalid JSON `{json_request}` due to: {error}"),
                         )
                     })
-                    .map(|json_response| Response {
+                    .map(|data| Response {
                         solidity_trace: None,
-                        json: json_response,
+                        data,
                         traces: Vec::new(),
                     });
             }
@@ -167,11 +167,12 @@ impl Provider {
 
         let response = jsonrpc::ResponseData::from(response.map(|response| response.result));
 
-        serde_json::to_string(&response)
+
+        serde_json::to_value(&response)
             .map_err(|e| napi::Error::new(Status::GenericFailure, e.to_string()))
-            .map(|json_response| Response {
+            .map(|data| Response {
                 solidity_trace,
-                json: json_response,
+                data,
                 traces: traces.into_iter().map(Arc::new).collect(),
             })
     }
@@ -209,7 +210,7 @@ impl Provider {
 
 #[napi]
 pub struct Response {
-    json: String,
+    data: serde_json::Value,
     /// When a transaction fails to execute, the provider returns a trace of the
     /// transaction.
     solidity_trace: Option<Arc<edr_evm::trace::Trace>>,
@@ -220,8 +221,8 @@ pub struct Response {
 #[napi]
 impl Response {
     #[napi(getter)]
-    pub fn json(&self) -> String {
-        self.json.clone()
+    pub fn data(&self) -> serde_json::Value {
+        self.data.clone()
     }
 
     #[napi(getter)]

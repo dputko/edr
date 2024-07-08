@@ -389,12 +389,12 @@ export interface Withdrawal {
   /** The value contained in withdrawal */
   amount: bigint
 }
-export class EdrContext {
+export declare class EdrContext {
   /**Creates a new [`EdrContext`] instance. Should only be called once! */
   constructor()
 }
 /** A JSON-RPC provider for Ethereum. */
-export class Provider {
+export declare class Provider {
   /**Constructs a new provider with the provided configuration. */
   static withConfig(context: EdrContext, config: ProviderConfig, loggerConfig: LoggerConfig, subscriberCallback: (event: SubscriptionEvent) => void): Promise<Provider>
   /**Handles a JSON-RPC request and returns a JSON-RPC response. */
@@ -408,11 +408,11 @@ export class Provider {
    */
   setVerboseTracing(verboseTracing: boolean): void
 }
-export class Response {
-  get json(): string
+export declare class Response {
+  get data(): any
   get solidityTrace(): RawTrace | null
   get traces(): Array<RawTrace>
 }
-export class RawTrace {
+export declare class RawTrace {
   trace(): Array<TracingMessage | TracingStep | TracingMessageResult>
 }
